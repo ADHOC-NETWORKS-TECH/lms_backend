@@ -1,24 +1,14 @@
-const { User, Subscription, Course, Progress } = require('../models/associations');
+const { User, Subscription, Course } = require('../models/associations');
 const { Op } = require('sequelize');
 
-// Get dashboard statistics
 exports.getStats = async (req, res) => {
   try {
     console.log('📊 Fetching admin stats...');
     
-    // Total users (students only - count all users with role 'student')
-    const totalStudents = await User.count({ 
-      where: { role: 'student' } 
-    });
-    
-    const totalAdmins = await User.count({ 
-      where: { role: 'admin' } 
-    });
-    
-    // Total courses
+    const totalStudents = await User.count({ where: { role: 'student' } });
+    const totalAdmins = await User.count({ where: { role: 'admin' } });
     const totalCourses = await Course.count();
     
-    // Active subscriptions (not expired)
     const activeSubscriptions = await Subscription.count({
       where: {
         status: 'active',
@@ -26,7 +16,6 @@ exports.getStats = async (req, res) => {
       }
     });
     
-    // Total revenue (sum of all active subscription amounts)
     const revenueResult = await Subscription.sum('amount', {
       where: { 
         status: 'active',
@@ -35,14 +24,6 @@ exports.getStats = async (req, res) => {
     });
     
     const totalRevenue = revenueResult || 0;
-    
-    console.log('📊 Stats result:', {
-      totalStudents,
-      totalAdmins,
-      totalCourses,
-      activeSubscriptions,
-      totalRevenue
-    });
     
     res.json({
       success: true,

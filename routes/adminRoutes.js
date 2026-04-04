@@ -9,6 +9,9 @@ const lessonController = require('../controllers/lessonController');
 router.use(protect);
 router.use(adminOnly);
 
+// admin stats
+router.get('/stats', adminStatsController.getStats);
+
 // Course routes
 router.post('/courses', courseController.createCourse);
 router.put('/courses/:id', courseController.updateCourse);
