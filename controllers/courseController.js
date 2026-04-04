@@ -4,13 +4,15 @@ const { Op } = require('sequelize');
 // Get all courses (public)
 exports.getAllCourses = async (req, res) => {
   try {
+    // Get ALL courses regardless of login status
     const courses = await Course.findAll({
       attributes: ['id', 'title', 'description', 'thumbnail', 'price_1month', 'price_3months', 'price_6months'],
       order: [['createdAt', 'DESC']]
     });
 
+    // If user is logged in, add access status
     let userAccess = {};
-    if (req.user && req.user.id) {
+    if (req.user) {
       const subscriptions = await Subscription.findAll({
         where: {
           userId: req.user.id,
@@ -23,23 +25,15 @@ exports.getAllCourses = async (req, res) => {
         acc[sub.courseId] = {
           hasAccess: true,
           expiresAt: sub.endDate,
-          plan: sub.plan,
-          daysRemaining: Math.ceil((new Date(sub.endDate) - new Date()) / (1000 * 60 * 60 * 24))
+          plan: sub.plan
         };
         return acc;
       }, {});
     }
 
+    // Return ALL courses with access status
     const coursesWithAccess = courses.map(course => ({
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      thumbnail: course.thumbnail,
-      prices: {
-        '1month': course.price_1month,
-        '3months': course.price_3months,
-        '6months': course.price_6months
-      },
+      ...course.toJSON(),
       userAccess: userAccess[course.id] || { hasAccess: false }
     }));
 
