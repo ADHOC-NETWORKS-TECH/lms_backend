@@ -3,23 +3,30 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Connect to Supabase PostgreSQL
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const databaseUrl = process.env.DATABASE_URL;
+
+// For Supabase Pooler connection
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false  // Required for Supabase
+      rejectUnauthorized: false  // This fixes the self-signed certificate error
     }
   },
-  logging: false  // Set to true to see SQL queries
+  logging: false,
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  }
 });
 
-// Test connection
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connected successfully to Supabase!');
+    console.log('✅ Database connected successfully!');
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
   }
