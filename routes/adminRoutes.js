@@ -5,6 +5,7 @@ const courseController = require('../controllers/courseController');
 const moduleController = require('../controllers/moduleController');
 const lessonController = require('../controllers/lessonController');
 const adminStatsController = require('../controllers/adminStatsController');
+const analyticsController = require('../controllers/analyticsController');
 
 // All admin routes require authentication and admin role
 router.use(protect);
@@ -17,6 +18,7 @@ router.get('/stats', adminStatsController.getStats);
 router.post('/courses', courseController.createCourse);
 router.put('/courses/:id', courseController.updateCourse);
 router.delete('/courses/:id', courseController.deleteCourse);
+router.get('/analytics', analyticsController.getAnalytics);
 
 // Module routes
 router.post('/courses/:courseId/modules', moduleController.addModule);
