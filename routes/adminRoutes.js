@@ -4,6 +4,7 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
 const courseController = require('../controllers/courseController');
 const moduleController = require('../controllers/moduleController');
 const lessonController = require('../controllers/lessonController');
+const adminStatsController = require('../controllers/adminStatsController');
 
 // All admin routes require authentication and admin role
 router.use(protect);
