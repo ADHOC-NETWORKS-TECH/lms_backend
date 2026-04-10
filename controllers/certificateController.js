@@ -1,7 +1,5 @@
 const { Certificate, User, Course } = require('../models/associations');
 const PDFDocument = require('pdfkit');
-const path = require('path');
-const fs = require('fs');
 
 // Generate unique certificate number
 const generateCertificateNumber = () => {
@@ -21,6 +19,8 @@ exports.generateCertificate = async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user.id;
     const { quizScore } = req.body;
+    
+    console.log(`📜 Generating certificate for user ${userId}, course ${courseId}, score ${quizScore}`);
     
     if (quizScore < 70) {
       return res.status(400).json({
@@ -62,6 +62,24 @@ exports.generateCertificate = async (req, res) => {
     });
   } catch (error) {
     console.error('Generate certificate error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get user's certificates
+exports.getMyCertificates = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const certificates = await Certificate.findAll({
+      where: { userId },
+      include: [{ model: Course, as: 'course', attributes: ['id', 'title', 'thumbnail'] }],
+      order: [['issueDate', 'DESC']]
+    });
+    
+    res.json({ success: true, data: certificates });
+  } catch (error) {
+    console.error('Get certificates error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -126,24 +144,6 @@ exports.downloadCertificate = async (req, res) => {
   }
 };
 
-// Get user's certificates
-exports.getMyCertificates = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    const certificates = await Certificate.findAll({
-      where: { userId },
-      include: [{ model: Course, as: 'course', attributes: ['id', 'title', 'thumbnail'] }],
-      order: [['issueDate', 'DESC']]
-    });
-    
-    res.json({ success: true, data: certificates });
-  } catch (error) {
-    console.error('Get certificates error:', error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 // Verify certificate (public)
 exports.verifyCertificate = async (req, res) => {
   try {
@@ -173,6 +173,24 @@ exports.verifyCertificate = async (req, res) => {
     });
   } catch (error) {
     console.error('Verify certificate error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Admin: Get all certificates
+exports.getAllCertificates = async (req, res) => {
+  try {
+    const certificates = await Certificate.findAll({
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
+        { model: Course, as: 'course', attributes: ['id', 'title'] }
+      ],
+      order: [['issueDate', 'DESC']]
+    });
+    
+    res.json({ success: true, data: certificates });
+  } catch (error) {
+    console.error('Get all certificates error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

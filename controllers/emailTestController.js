@@ -36,15 +36,9 @@ exports.testSendEmail = async (req, res) => {
         });
       }
       
-      // Get first active subscription for this user
       subscription = await Subscription.findOne({
-        where: {
-          userId: user.id,
-          status: 'active'
-        },
-        include: [
-          { model: Course, as: 'course' }
-        ]
+        where: { userId: user.id, status: 'active' },
+        include: [{ model: Course, as: 'course' }]
       });
       
       if (subscription) {

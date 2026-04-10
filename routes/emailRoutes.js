@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 const emailTestController = require('../controllers/emailTestController');
 
-// All email test routes require admin access
+// All email routes require admin access
 router.use(protect);
 router.use(adminOnly);
 
