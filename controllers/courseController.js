@@ -1,4 +1,4 @@
-const { Course, Module, Lesson, Subscription } = require('../models/associations');
+const { Course, Module, Lesson, Subscription,Quiz  } = require('../models/associations');
 const { Op } = require('sequelize');
 
 // Get all courses (public)
@@ -68,6 +68,10 @@ exports.getCourseById = async (req, res) => {
             }
           ],
           order: [['order', 'ASC']]
+        },
+         {
+          model: Quiz,        // ← ADD THIS
+          as: 'quizzes'       // ← ADD THIS
         }
       ]
     });
