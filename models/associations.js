@@ -71,4 +71,5 @@ module.exports = {
   Quiz,
   QuizQuestion,
   QuizAttempt,
+  Ticket,
 };
