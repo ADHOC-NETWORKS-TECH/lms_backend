@@ -10,6 +10,7 @@ const sequelize = require('./config/database');
 const quizRoutes = require('./routes/quizRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -52,6 +53,7 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/password', passwordRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 
 
