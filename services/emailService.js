@@ -40,3 +40,26 @@ exports.sendRenewalConfirmation = async (user, course, subscription) => {
   const html = `<h2>Hi ${user.name},</h2><p>Your ${course.title} access has been renewed!</p>`;
   return await sendEmail(user.email, subject, html);
 };
+
+// Add this function to emailService.js
+exports.sendPasswordResetEmail = async (email, name, resetUrl) => {
+  const subject = 'Reset Your Password - LMS Portal';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Hi ${name},</h2>
+      <p>We received a request to reset your password for your LMS Portal account.</p>
+      <p>Click the button below to reset your password. This link is valid for 1 hour.</p>
+      <div style="margin: 30px 0;">
+        <a href="${resetUrl}" 
+           style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
+          Reset Password
+        </a>
+      </div>
+      <p>If you didn't request this, please ignore this email.</p>
+      <br>
+      <p>Team LMS Portal</p>
+    </div>
+  `;
+  
+  return await sendEmail(email, subject, html);
+};

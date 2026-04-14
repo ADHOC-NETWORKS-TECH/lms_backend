@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+const passwordRoutes = require('./routes/passwordRoutes');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
@@ -50,6 +51,7 @@ app.use('/api/payments', require('./routes/mockPaymentRoutes'));
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/password', passwordRoutes);
 
 
 
