@@ -22,7 +22,6 @@ const Quiz = sequelize.define('Quiz', {
       model: 'modules',
       key: 'id',
     },
-    comment: 'If null, this is a final quiz for the course',
   },
   title: {
     type: DataTypes.STRING,
@@ -34,10 +33,7 @@ const Quiz = sequelize.define('Quiz', {
   },
   type: {
     type: DataTypes.STRING,
-    defaultValue: 'module',
-    validate: {
-      isIn: [['module', 'final']],
-    },
+    defaultValue: 'final',
   },
   passingScore: {
     type: DataTypes.INTEGER,
@@ -50,11 +46,10 @@ const Quiz = sequelize.define('Quiz', {
   order: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
-    comment: 'Order for module quizzes',
   },
 }, {
   timestamps: true,
-  tableName: 'quizzes',
+  tableName: 'Quizzes',
 });
 
 module.exports = Quiz;

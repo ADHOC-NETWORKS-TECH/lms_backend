@@ -9,20 +9,24 @@ router.use(protect);
 // Get quizzes for a course
 router.get('/course/:courseId', quizController.getCourseQuizzes);
 
+// Get quizzes for a module
+router.get('/module/:moduleId', quizController.getModuleQuizzes);
+
+// Check module quiz status
+router.get('/module/:moduleId/status', quizController.checkModuleQuizStatus);
+
 // Get single quiz
 router.get('/:quizId', quizController.getQuiz);
 
 // Submit quiz
 router.post('/:quizId/submit', quizController.submitQuiz);
 
-// Get user's attempts
+// Get user's quiz attempts
 router.get('/attempts/my', quizController.getMyAttempts);
 
 // Admin only routes
 router.post('/', adminOnly, quizController.createQuiz);
 router.post('/:quizId/questions', adminOnly, quizController.addQuestions);
-
-router.get('/module/:moduleId', quizController.getModuleQuizzes);
-router.get('/module/:moduleId/status', quizController.checkModuleQuizStatus);
+router.delete('/:quizId', adminOnly, quizController.deleteQuiz);
 
 module.exports = router;

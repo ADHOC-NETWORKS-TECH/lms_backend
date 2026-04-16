@@ -1,33 +1,6 @@
 const { Quiz, QuizQuestion, QuizAttempt, Course, Module } = require('../models/associations');
 const { Op } = require('sequelize');
 
-// Create quiz (Admin only)
-exports.createQuiz = async (req, res) => {
-  try {
-    const { courseId, moduleId, title, description, type, passingScore, timeLimit, order } = req.body;
-    
-    const quiz = await Quiz.create({
-      courseId,
-      moduleId: moduleId || null,
-      title,
-      description,
-      type: type || (moduleId ? 'module' : 'final'),
-      passingScore: passingScore || 70,
-      timeLimit: timeLimit || 30,
-      order: order || 0
-    });
-    
-    res.status(201).json({
-      success: true,
-      message: 'Quiz created successfully',
-      data: quiz
-    });
-  } catch (error) {
-    console.error('Create quiz error:', error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 // Get quizzes for a course (grouped by module)
 exports.getCourseQuizzes = async (req, res) => {
   try {
@@ -39,23 +12,15 @@ exports.getCourseQuizzes = async (req, res) => {
         { model: QuizQuestion, as: 'questions' },
         { model: Module, as: 'module', attributes: ['id', 'title', 'order'] }
       ],
-      order: [
-        ['type', 'ASC'],
-        ['order', 'ASC'],
-        ['createdAt', 'ASC']
-      ]
+      order: [['type', 'ASC'], ['order', 'ASC'], ['createdAt', 'ASC']]
     });
     
-    // Separate module quizzes and final quiz
     const moduleQuizzes = quizzes.filter(q => q.type === 'module');
     const finalQuiz = quizzes.find(q => q.type === 'final');
     
     res.json({
       success: true,
-      data: {
-        moduleQuizzes,
-        finalQuiz
-      }
+      data: { moduleQuizzes, finalQuiz }
     });
   } catch (error) {
     console.error('Get course quizzes error:', error);
@@ -77,6 +42,39 @@ exports.getModuleQuizzes = async (req, res) => {
     res.json({ success: true, data: quizzes });
   } catch (error) {
     console.error('Get module quizzes error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Check if module quiz is completed/passed
+exports.checkModuleQuizStatus = async (req, res) => {
+  try {
+    const { moduleId } = req.params;
+    const userId = req.user.id;
+    
+    const quiz = await Quiz.findOne({
+      where: { moduleId, type: 'module' }
+    });
+    
+    if (!quiz) {
+      return res.json({ success: true, data: { exists: false } });
+    }
+    
+    const attempt = await QuizAttempt.findOne({
+      where: { userId, quizId: quiz.id, passed: true }
+    });
+    
+    res.json({
+      success: true,
+      data: {
+        exists: true,
+        quizId: quiz.id,
+        passed: !!attempt,
+        attempt
+      }
+    });
+  } catch (error) {
+    console.error('Check module quiz status error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -117,18 +115,6 @@ exports.submitQuiz = async (req, res) => {
     
     if (!quiz) {
       return res.status(404).json({ success: false, message: 'Quiz not found' });
-    }
-    
-    // Check if already attempted (optional: allow retakes)
-    const existingAttempt = await QuizAttempt.findOne({
-      where: { userId, quizId, passed: true }
-    });
-    
-    if (existingAttempt && quiz.type === 'final') {
-      return res.status(400).json({
-        success: false,
-        message: 'You have already passed this quiz'
-      });
     }
     
     let totalPoints = 0;
@@ -204,35 +190,78 @@ exports.getMyAttempts = async (req, res) => {
   }
 };
 
-// Check if module quiz is completed/passed
-exports.checkModuleQuizStatus = async (req, res) => {
+// Create quiz (Admin only)
+exports.createQuiz = async (req, res) => {
   try {
-    const { moduleId } = req.params;
-    const userId = req.user.id;
+    const { courseId, moduleId, title, description, type, passingScore, timeLimit, order } = req.body;
     
-    const quiz = await Quiz.findOne({
-      where: { moduleId, type: 'module' }
+    const quiz = await Quiz.create({
+      courseId,
+      moduleId: moduleId || null,
+      title,
+      description,
+      type: type || (moduleId ? 'module' : 'final'),
+      passingScore: passingScore || 70,
+      timeLimit: timeLimit || 30,
+      order: order || 0
     });
     
-    if (!quiz) {
-      return res.json({ success: true, data: { exists: false } });
+    res.status(201).json({
+      success: true,
+      message: 'Quiz created successfully',
+      data: quiz
+    });
+  } catch (error) {
+    console.error('Create quiz error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Add questions to quiz (Admin only)
+exports.addQuestions = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { questions } = req.body;
+    
+    const createdQuestions = [];
+    for (const q of questions) {
+      const question = await QuizQuestion.create({
+        quizId,
+        questionText: q.questionText,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation,
+        points: q.points || 1
+      });
+      createdQuestions.push(question);
     }
-    
-    const attempt = await QuizAttempt.findOne({
-      where: { userId, quizId: quiz.id, passed: true }
-    });
     
     res.json({
       success: true,
-      data: {
-        exists: true,
-        quizId: quiz.id,
-        passed: !!attempt,
-        attempt
-      }
+      message: `${createdQuestions.length} questions added`,
+      data: createdQuestions
     });
   } catch (error) {
-    console.error('Check module quiz status error:', error);
+    console.error('Add questions error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete quiz (Admin only)
+exports.deleteQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    
+    const quiz = await Quiz.findByPk(quizId);
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
+    
+    await quiz.destroy();
+    
+    res.json({ success: true, message: 'Quiz deleted successfully' });
+  } catch (error) {
+    console.error('Delete quiz error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
