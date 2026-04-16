@@ -22,4 +22,7 @@ router.get('/attempts/my', quizController.getMyAttempts);
 router.post('/', adminOnly, quizController.createQuiz);
 router.post('/:quizId/questions', adminOnly, quizController.addQuestions);
 
+router.get('/module/:moduleId', quizController.getModuleQuizzes);
+router.get('/module/:moduleId/status', quizController.checkModuleQuizStatus);
+
 module.exports = router;
