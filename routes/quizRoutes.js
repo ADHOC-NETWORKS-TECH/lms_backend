@@ -26,7 +26,11 @@ router.get('/attempts/my', quizController.getMyAttempts);
 
 // Admin only routes
 router.post('/', adminOnly, quizController.createQuiz);
+router.put('/:quizId', adminOnly, quizController.updateQuiz);  // ← UPDATE QUIZ
+router.delete('/:quizId', adminOnly, quizController.deleteQuiz);  // ← DELETE QUIZ
 router.post('/:quizId/questions', adminOnly, quizController.addQuestions);
-router.delete('/:quizId', adminOnly, quizController.deleteQuiz);
+router.put('/questions/:questionId', adminOnly, quizController.updateQuestion);  // ← UPDATE QUESTION
+router.delete('/questions/:questionId', adminOnly, quizController.deleteQuestion);  // ← DELETE QUESTION
+router.get('/questions/:questionId', adminOnly, quizController.getQuestion);
 
 module.exports = router;

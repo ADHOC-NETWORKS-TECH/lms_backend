@@ -6,25 +6,45 @@ exports.getCourseQuizzes = async (req, res) => {
   try {
     const { courseId } = req.params;
     
+    console.log(`Fetching quizzes for course: ${courseId}`);
+    
     const quizzes = await Quiz.findAll({
       where: { courseId },
       include: [
-        { model: QuizQuestion, as: 'questions' },
-        { model: Module, as: 'module', attributes: ['id', 'title', 'order'] }
+        { 
+          model: QuizQuestion, 
+          as: 'questions',
+          required: false
+        },
+        { 
+          model: Module, 
+          as: 'module',
+          attributes: ['id', 'title', 'order'],
+          required: false  // This allows quizzes without a module (final quiz)
+        }
       ],
       order: [['type', 'ASC'], ['order', 'ASC'], ['createdAt', 'ASC']]
     });
+    
+    console.log(`Found ${quizzes.length} quizzes`);
     
     const moduleQuizzes = quizzes.filter(q => q.type === 'module');
     const finalQuiz = quizzes.find(q => q.type === 'final');
     
     res.json({
       success: true,
-      data: { moduleQuizzes, finalQuiz }
+      data: {
+        moduleQuizzes,
+        finalQuiz: finalQuiz || null
+      }
     });
   } catch (error) {
     console.error('Get course quizzes error:', error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -263,5 +283,170 @@ exports.deleteQuiz = async (req, res) => {
   } catch (error) {
     console.error('Delete quiz error:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update quiz (Admin only)
+exports.updateQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { title, description, passingScore, timeLimit, order } = req.body;
+    
+    const quiz = await Quiz.findByPk(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz not found'
+      });
+    }
+    
+    await quiz.update({
+      title: title || quiz.title,
+      description: description !== undefined ? description : quiz.description,
+      passingScore: passingScore || quiz.passingScore,
+      timeLimit: timeLimit || quiz.timeLimit,
+      order: order !== undefined ? order : quiz.order
+    });
+    
+    res.json({
+      success: true,
+      message: 'Quiz updated successfully',
+      data: quiz
+    });
+  } catch (error) {
+    console.error('Update quiz error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Delete quiz (Admin only)
+exports.deleteQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    
+    const quiz = await Quiz.findByPk(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz not found'
+      });
+    }
+    
+    // This will also delete associated questions and attempts due to cascade
+    await quiz.destroy();
+    
+    res.json({
+      success: true,
+      message: 'Quiz deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete quiz error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Update question (Admin only)
+exports.updateQuestion = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    const { questionText, options, correctAnswer, explanation, points } = req.body;
+    
+    const question = await QuizQuestion.findByPk(questionId);
+    
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question not found'
+      });
+    }
+    
+    await question.update({
+      questionText: questionText || question.questionText,
+      options: options || question.options,
+      correctAnswer: correctAnswer !== undefined ? correctAnswer : question.correctAnswer,
+      explanation: explanation !== undefined ? explanation : question.explanation,
+      points: points || question.points
+    });
+    
+    res.json({
+      success: true,
+      message: 'Question updated successfully',
+      data: question
+    });
+  } catch (error) {
+    console.error('Update question error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Delete question (Admin only)
+exports.deleteQuestion = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    
+    const question = await QuizQuestion.findByPk(questionId);
+    
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question not found'
+      });
+    }
+    
+    await question.destroy();
+    
+    res.json({
+      success: true,
+      message: 'Question deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete question error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Get single question
+exports.getQuestion = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    
+    const question = await QuizQuestion.findByPk(questionId);
+    
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: question
+    });
+  } catch (error) {
+    console.error('Get question error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
   }
 };

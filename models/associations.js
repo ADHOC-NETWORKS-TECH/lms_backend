@@ -58,6 +58,9 @@ Ticket.belongsTo(Course, { foreignKey: 'courseId', as: 'course' });
 Lesson.hasMany(Ticket, { foreignKey: 'lessonId', as: 'tickets' });
 Ticket.belongsTo(Lesson, { foreignKey: 'lessonId', as: 'lesson' });
 
+Module.hasMany(Quiz, { foreignKey: 'moduleId', as: 'quizzes' });
+Quiz.belongsTo(Module, { foreignKey: 'moduleId', as: 'module' });
+
 // Export all models
 module.exports = {
   sequelize,
