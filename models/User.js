@@ -40,6 +40,19 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    referralCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    referredBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    availableDiscounts: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt

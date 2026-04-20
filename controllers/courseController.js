@@ -6,7 +6,7 @@ exports.getAllCourses = async (req, res) => {
   try {
     // Get ALL courses regardless of login status
     const courses = await Course.findAll({
-      attributes: ['id', 'title', 'description', 'thumbnail', 'price_1month', 'price_3months', 'price_6months'],
+      attributes: ['id', 'title', 'description', 'thumbnail', 'price_1month', 'price_3months', 'price_6months', 'course_type', 'allowed_plan'],
       order: [['createdAt', 'DESC']]
     });
 
@@ -121,6 +121,8 @@ exports.getCourseById = async (req, res) => {
           '3months': course.price_3months,
           '6months': course.price_6months
         },
+        course_type: course.course_type,
+        allowed_plan: course.allowed_plan,
         modules: course.modules || [],
         userAccess: {
           hasAccess,
@@ -210,7 +212,7 @@ exports.getMyCourses = async (req, res) => {
 // Admin: Create new course
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description, thumbnail, price_1month, price_3months, price_6months } = req.body;
+    const { title, description, thumbnail, price_1month, price_3months, price_6months, course_type, allowed_plan } = req.body;
 
     if (!title) {
       return res.status(400).json({
@@ -225,7 +227,9 @@ exports.createCourse = async (req, res) => {
       thumbnail: thumbnail || null,
       price_1month: price_1month || 499,
       price_3months: price_3months || 1299,
-      price_6months: price_6months || 2499
+      price_6months: price_6months || 2499,
+      course_type: course_type || 'mega',
+      allowed_plan: allowed_plan || '1month'
     });
 
     res.status(201).json({
@@ -240,7 +244,9 @@ exports.createCourse = async (req, res) => {
           '1month': course.price_1month,
           '3months': course.price_3months,
           '6months': course.price_6months
-        }
+        },
+        course_type: course.course_type,
+        allowed_plan: course.allowed_plan
       }
     });
   } catch (error) {
@@ -265,7 +271,7 @@ exports.updateCourse = async (req, res) => {
       });
     }
     
-    const { title, description, thumbnail, price_1month, price_3months, price_6months } = req.body;
+    const { title, description, thumbnail, price_1month, price_3months, price_6months, course_type, allowed_plan } = req.body;
     
     await course.update({
       title: title || course.title,
@@ -273,7 +279,9 @@ exports.updateCourse = async (req, res) => {
       thumbnail: thumbnail !== undefined ? thumbnail : course.thumbnail,
       price_1month: price_1month !== undefined ? price_1month : course.price_1month,
       price_3months: price_3months !== undefined ? price_3months : course.price_3months,
-      price_6months: price_6months !== undefined ? price_6months : course.price_6months
+      price_6months: price_6months !== undefined ? price_6months : course.price_6months,
+      course_type: course_type !== undefined ? course_type : course.course_type,
+      allowed_plan: allowed_plan !== undefined ? allowed_plan : course.allowed_plan
     });
     
     res.json({
@@ -288,7 +296,9 @@ exports.updateCourse = async (req, res) => {
           '1month': course.price_1month,
           '3months': course.price_3months,
           '6months': course.price_6months
-        }
+        },
+        course_type: course.course_type,
+        allowed_plan: course.allowed_plan
       }
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/associations');
+const crypto = require('crypto');
+const { User, Subscription } = require('../models/associations');
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -14,7 +15,7 @@ const generateToken = (user) => {
 // Register User
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role = 'student' } = req.body;
+    const { name, email, password, role = 'student', referralCode } = req.body;
 
     // Validate input
     if (!name || !email || !password) {
@@ -36,12 +37,35 @@ exports.register = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Handle Referral Code logic
+    let referredById = null;
+    if (referralCode) {
+      const referrer = await User.findOne({ where: { referralCode } });
+      if (referrer) {
+        // Check if referrer has at least one subscription
+        const hasSubscription = await Subscription.findOne({
+          where: { userId: referrer.id }
+        });
+        
+        if (hasSubscription) {
+          referredById = referrer.id;
+          // Increment their available discounts
+          await referrer.increment('availableDiscounts', { by: 1 });
+        }
+      }
+    }
+
+    // Generate unique referral code for the new user
+    const newReferralCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+
     // Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
+      referralCode: newReferralCode,
+      referredBy: referredById
     });
 
     // Generate token
@@ -56,6 +80,8 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        referralCode: user.referralCode,
+        availableDiscounts: user.availableDiscounts
       },
     });
   } catch (error) {
@@ -111,6 +137,8 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        referralCode: user.referralCode,
+        availableDiscounts: user.availableDiscounts
       },
     });
   } catch (error) {

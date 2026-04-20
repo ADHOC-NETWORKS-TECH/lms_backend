@@ -32,6 +32,20 @@ const Course = sequelize.define('Course', {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 2499,
     comment: 'Price for 6 months access'
+  },
+  course_type: {
+    type: DataTypes.STRING,
+    defaultValue: 'mega',
+    validate: {
+      isIn: [['mini', 'mega']]
+    }
+  },
+  allowed_plan: {
+    type: DataTypes.STRING,
+    defaultValue: '1month',
+    validate: {
+      isIn: [['1month', '3months', '6months']]
+    }
   }
 }, {
   timestamps: true,

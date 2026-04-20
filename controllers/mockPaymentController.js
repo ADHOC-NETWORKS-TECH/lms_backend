@@ -1,4 +1,4 @@
-const { Subscription, Course } = require('../models/associations');
+const { Subscription, Course, User } = require('../models/associations');
 const { Op } = require('sequelize');
 
 
@@ -67,7 +67,14 @@ exports.createOrder = async (req, res) => {
         }
 
         // Get price
-        const amount = getPlanPrice(course, plan);
+        let amount = getPlanPrice(course, plan);
+        let discountApplied = false;
+
+        const user = await User.findByPk(userId);
+        if (user && user.availableDiscounts > 0) {
+            amount = Math.round(amount * 0.9); // 10% discount
+            discountApplied = true;
+        }
 
         // Generate mock order ID
         const mockOrderId = `mock_order_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
@@ -78,6 +85,8 @@ exports.createOrder = async (req, res) => {
             data: {
                 orderId: mockOrderId,
                 amount: amount,
+                originalAmount: getPlanPrice(course, plan),
+                discountApplied: discountApplied,
                 amountPaise: amount * 100,
                 currency: 'INR',
                 keyId: 'MOCK_KEY_ID',
@@ -153,6 +162,18 @@ exports.verifyPayment = async (req, res) => {
             });
         }
 
+        // Calculate discount if applicable
+        const user = await User.findByPk(userId);
+        let finalAmount = amount || getPlanPrice(course, plan);
+        let discountApplied = false;
+
+        if (user && user.availableDiscounts > 0 && finalAmount < getPlanPrice(course, plan)) {
+             discountApplied = true;
+        } else if (!amount && user && user.availableDiscounts > 0) {
+             finalAmount = Math.round(finalAmount * 0.9);
+             discountApplied = true;
+        }
+
         // Calculate dates
         const startDate = new Date();
         const endDate = new Date();
@@ -166,10 +187,14 @@ exports.verifyPayment = async (req, res) => {
             startDate: startDate,
             endDate: endDate,
             status: 'active',
-            amount: amount || getPlanPrice(course, plan),
+            amount: finalAmount,
             paymentId: `mock_${paymentId}`,
             orderId: orderId
         });
+
+        if (discountApplied && user) {
+            await user.decrement('availableDiscounts', { by: 1 });
+        }
 
         console.log(`✅ [MOCK] Payment verified! Subscription created: ${subscription.id}`);
         res.json({
@@ -181,7 +206,8 @@ exports.verifyPayment = async (req, res) => {
                 courseId: courseId,
                 courseTitle: course.title,
                 plan: plan,
-                amount: amount || getPlanPrice(course, plan),
+                amount: finalAmount,
+                discountApplied: discountApplied,
                 expiresAt: endDate,
                 daysRemaining: PLANS[plan].duration
             }
@@ -243,7 +269,14 @@ exports.mockPurchase = async (req, res) => {
         }
 
         // Get price
-        const amount = getPlanPrice(course, plan);
+        let amount = getPlanPrice(course, plan);
+        let discountApplied = false;
+        
+        const user = await User.findByPk(userId);
+        if (user && user.availableDiscounts > 0) {
+            amount = Math.round(amount * 0.9);
+            discountApplied = true;
+        }
 
         // Calculate dates
         const startDate = new Date();
@@ -263,6 +296,10 @@ exports.mockPurchase = async (req, res) => {
             orderId: `mock_order_${Date.now()}`
         });
 
+        if (discountApplied && user) {
+            await user.decrement('availableDiscounts', { by: 1 });
+        }
+
         console.log(`✅ [MOCK] Direct purchase successful! Subscription: ${subscription.id}`);
 
         res.json({
@@ -275,6 +312,7 @@ exports.mockPurchase = async (req, res) => {
                 courseTitle: course.title,
                 plan: plan,
                 amount: amount,
+                discountApplied: discountApplied,
                 expiresAt: endDate,
                 daysRemaining: PLANS[plan].duration
             }
