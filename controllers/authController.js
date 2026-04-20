@@ -65,7 +65,8 @@ exports.register = async (req, res) => {
       password: hashedPassword,
       role,
       referralCode: newReferralCode,
-      referredBy: referredById
+      referredBy: referredById,
+      availableDiscounts: referredById ? 1 : 0
     });
 
     // Generate token
@@ -123,6 +124,13 @@ exports.login = async (req, res) => {
         success: false,
         message: 'Invalid credentials',
       });
+    }
+
+    // Backfill referral code if missing for old users
+    if (!user.referralCode) {
+      const newReferralCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+      user.referralCode = newReferralCode;
+      await user.save();
     }
 
     // Generate token
