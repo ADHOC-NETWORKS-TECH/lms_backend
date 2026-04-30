@@ -19,15 +19,15 @@ const PORT = process.env.PORT || 5000;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests, please try again later.'
+  max: 1000,
+  message: { success: false, message: 'Too many requests, please try again later.' }
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 20,
   skipSuccessfulRequests: true,
-  message: 'Too many login attempts, please try again later.'
+  message: { success: false, message: 'Too many login attempts, please try again later.' }
 });
 
 // ============ MIDDLEWARE ============
