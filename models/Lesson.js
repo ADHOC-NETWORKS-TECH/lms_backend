@@ -23,6 +23,10 @@ const Lesson = sequelize.define('Lesson', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  type: {
+    type: DataTypes.STRING,
+    defaultValue: 'video',
+  },
   pdfUrl: {
     type: DataTypes.STRING,
   },

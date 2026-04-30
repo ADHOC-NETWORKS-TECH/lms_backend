@@ -225,10 +225,10 @@ exports.verifyPayment = async (req, res) => {
 // Mock: Direct purchase (simplest - one step)
 exports.mockPurchase = async (req, res) => {
     try {
-        const { courseId, plan } = req.body;
+        const { courseId, plan, coinsUsed } = req.body;
         const userId = req.user.id;
 
-        console.log(`💰 [MOCK] Direct purchase: User ${userId}, Course ${courseId}, Plan ${plan}`);
+        console.log(`💰 [MOCK] Direct purchase: User ${userId}, Course ${courseId}, Plan ${plan}, Coins Used ${coinsUsed || 0}`);
 
         // Validate course
         const course = await Course.findByPk(courseId);
@@ -296,8 +296,25 @@ exports.mockPurchase = async (req, res) => {
             orderId: `mock_order_${Date.now()}`
         });
 
-        if (discountApplied && user) {
-            await user.decrement('availableDiscounts', { by: 1 });
+        // Handle Coins
+        const coinsToDeduct = coinsUsed || 0;
+        let amountPaid = amount;
+        
+        if (user) {
+            if (coinsToDeduct > 0 && user.coins >= coinsToDeduct) {
+                await user.decrement('coins', { by: coinsToDeduct });
+                amountPaid = Math.max(0, amount - coinsToDeduct);
+            }
+            
+            // 10% cashback
+            if (amountPaid > 0) {
+                const earnedCoins = Math.floor(amountPaid * 0.1);
+                await user.increment('coins', { by: earnedCoins });
+            }
+            
+            if (discountApplied) {
+                await user.decrement('availableDiscounts', { by: 1 });
+            }
         }
 
         console.log(`✅ [MOCK] Direct purchase successful! Subscription: ${subscription.id}`);

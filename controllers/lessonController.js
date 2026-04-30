@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.addLesson = async (req, res) => {
   try {
     const { moduleId } = req.params;
-    const { title, videoUrl, pdfUrl, order, duration } = req.body;
+    const { title, type, videoUrl, pdfUrl, order, duration } = req.body;
 
     const module = await Module.findByPk(moduleId);
     if (!module) {
@@ -25,9 +25,11 @@ exports.addLesson = async (req, res) => {
     const lesson = await Lesson.create({
       moduleId,
       title,
+      type: type || 'video',
       videoUrl,
       pdfUrl: pdfUrl || null,
       order: order || 0,
+
       duration: duration || 0
     });
 
@@ -58,10 +60,11 @@ exports.updateLesson = async (req, res) => {
       });
     }
 
-    const { title, videoUrl, pdfUrl, order, duration } = req.body;
+    const { title, type, videoUrl, pdfUrl, order, duration } = req.body;
 
     await lesson.update({
       title: title || lesson.title,
+      type: type || lesson.type,
       videoUrl: videoUrl || lesson.videoUrl,
       pdfUrl: pdfUrl !== undefined ? pdfUrl : lesson.pdfUrl,
       order: order !== undefined ? order : lesson.order,
@@ -171,6 +174,7 @@ exports.getLessonById = async (req, res) => {
       data: {
         id: lesson.id,
         title: lesson.title,
+        type: lesson.type,
         videoUrl: lesson.videoUrl,
         pdfUrl: lesson.pdfUrl,
         order: lesson.order,
