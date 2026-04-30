@@ -42,16 +42,9 @@ exports.register = async (req, res) => {
     if (referralCode) {
       const referrer = await User.findOne({ where: { referralCode } });
       if (referrer) {
-        // Check if referrer has at least one subscription
-        const hasSubscription = await Subscription.findOne({
-          where: { userId: referrer.id }
-        });
-        
-        if (hasSubscription) {
-          referredById = referrer.id;
-          // Increment their available discounts
-          await referrer.increment('availableDiscounts', { by: 1 });
-        }
+        referredById = referrer.id;
+        // Increment their available discounts
+        await referrer.increment('availableDiscounts', { by: 1 });
       }
     }
 

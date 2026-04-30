@@ -306,10 +306,13 @@ exports.mockPurchase = async (req, res) => {
                 amountPaid = Math.max(0, amount - coinsToDeduct);
             }
             
-            // 10% cashback
-            if (amountPaid > 0) {
+            // 10% referral reward to the person who referred them
+            if (amountPaid > 0 && user.referredBy) {
                 const earnedCoins = Math.floor(amountPaid * 0.1);
-                await user.increment('coins', { by: earnedCoins });
+                const referrer = await User.findByPk(user.referredBy);
+                if (referrer) {
+                    await referrer.increment('coins', { by: earnedCoins });
+                }
             }
             
             if (discountApplied) {
