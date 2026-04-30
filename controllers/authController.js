@@ -75,7 +75,8 @@ exports.register = async (req, res) => {
         email: user.email,
         role: user.role,
         referralCode: user.referralCode,
-        availableDiscounts: user.availableDiscounts
+        availableDiscounts: user.availableDiscounts,
+        coins: user.coins
       },
     });
   } catch (error) {
@@ -139,7 +140,8 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         referralCode: user.referralCode,
-        availableDiscounts: user.availableDiscounts
+        availableDiscounts: user.availableDiscounts,
+        coins: user.coins
       },
     });
   } catch (error) {
