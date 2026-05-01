@@ -3,8 +3,8 @@ const sequelize = require('../config/database');
 
 const Blog = sequelize.define('Blog', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true,
   },
   title: {
@@ -25,8 +25,12 @@ const Blog = sequelize.define('Blog', {
     allowNull: true,
   },
   authorId: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
   },
   status: {
     type: DataTypes.ENUM('draft', 'published'),
@@ -34,6 +38,7 @@ const Blog = sequelize.define('Blog', {
   }
 }, {
   timestamps: true,
+  tableName: 'blogs',
 });
 
 module.exports = Blog;
