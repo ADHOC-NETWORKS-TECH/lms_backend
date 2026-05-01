@@ -101,42 +101,87 @@ exports.downloadCertificate = async (req, res) => {
     }
     
     // Create PDF
-    const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 50 });
+    const doc = new PDFDocument({
+      size: 'A4',
+      layout: 'landscape',
+      margin: 0 // Remove margin to prevent accidental pagination
+    });
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=certificate_${certificate.certificateNumber}.pdf`);
     
     doc.pipe(res);
     
-    // Design certificate
-    doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-       .strokeColor('#4CAF50').lineWidth(5).stroke();
+    const width = doc.page.width;
+    const height = doc.page.height;
+
+    // Design certificate background
+    doc.rect(0, 0, width, height).fill('#ffffff');
+
+    // Outer Border
+    doc.rect(20, 20, width - 40, height - 40).lineWidth(10).strokeColor('#0f172a').stroke();
+    // Inner Border
+    doc.rect(35, 35, width - 70, height - 70).lineWidth(2).strokeColor('#ca8a04').stroke();
+
+    // Corner decorations (Gold)
+    doc.path('M 35,75 L 35,35 L 75,35').lineWidth(6).strokeColor('#ca8a04').stroke();
+    doc.path(`M ${width - 35},75 L ${width - 35},35 L ${width - 75},35`).lineWidth(6).strokeColor('#ca8a04').stroke();
+    doc.path(`M 35,${height - 75} L 35,${height - 35} L 75,${height - 35}`).lineWidth(6).strokeColor('#ca8a04').stroke();
+    doc.path(`M ${width - 35},${height - 75} L ${width - 35},${height - 35} L ${width - 75},${height - 35}`).lineWidth(6).strokeColor('#ca8a04').stroke();
+
+    // Title
+    doc.fontSize(40).font('Helvetica-Bold').fillColor('#0f172a')
+       .text('CERTIFICATE OF COMPLETION', 0, 100, { align: 'center', width: width });
     
-    doc.rect(30, 30, doc.page.width - 60, doc.page.height - 60)
-       .strokeColor('#FF9800').lineWidth(2).stroke();
+    // Subtitle
+    doc.fontSize(16).font('Helvetica-Oblique').fillColor('#64748b')
+       .text('THIS PROUDLY CERTIFIES THAT', 0, 170, { align: 'center', width: width });
     
-    doc.fontSize(48).font('Helvetica-Bold').fillColor('#4CAF50')
-       .text('CERTIFICATE OF COMPLETION', 0, 80, { align: 'center' });
+    // Student Name
+    doc.fontSize(48).font('Helvetica-Bold').fillColor('#ca8a04')
+       .text(certificate.user.name, 0, 220, { align: 'center', width: width });
     
-    doc.fontSize(20).font('Helvetica').fillColor('#666')
-       .text('This certificate is proudly presented to', 0, 180, { align: 'center' });
+    // Course Description
+    doc.fontSize(16).font('Helvetica').fillColor('#64748b')
+       .text('HAS SUCCESSFULLY COMPLETED THE COURSE', 0, 300, { align: 'center', width: width });
     
-    doc.fontSize(42).font('Helvetica-Bold').fillColor('#2196F3')
-       .text(certificate.user.name, 0, 250, { align: 'center' });
+    // Course Title
+    doc.fontSize(28).font('Helvetica-Bold').fillColor('#0f172a')
+       .text(certificate.course.title, 0, 340, { align: 'center', width: width });
     
-    doc.fontSize(18).font('Helvetica').fillColor('#666')
-       .text('for successfully completing the course', 0, 330, { align: 'center' });
-    
-    doc.fontSize(28).font('Helvetica-Bold').fillColor('#FF9800')
-       .text(certificate.course.title, 0, 380, { align: 'center' });
-    
-    doc.fontSize(14).font('Helvetica').fillColor('#666')
-       .text(`with a score of ${certificate.quizScore}%`, 0, 450, { align: 'center' });
-    
-    doc.fontSize(12).text(`Issue Date: ${new Date(certificate.issueDate).toLocaleDateString()}`, 50, doc.page.height - 80);
-    doc.fontSize(10).text(`Certificate No: ${certificate.certificateNumber}`, 50, doc.page.height - 60);
-    doc.fontSize(10).text(`Verification Code: ${certificate.verificationCode}`, 50, doc.page.height - 40);
-    
+    // Score
+    if (certificate.quizScore != null) {
+      doc.fontSize(14).font('Helvetica-Bold').fillColor('#10b981')
+         .text(`WITH A SCORE OF ${certificate.quizScore}%`, 0, 390, { align: 'center', width: width });
+    }
+
+    // Signatures and Date Line
+    const signatureY = height - 140;
+
+    // Issue Date
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#0f172a')
+       .text(new Date(certificate.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 120, signatureY);
+    doc.rect(100, signatureY + 20, 200, 1).fill('#0f172a');
+    doc.fontSize(10).font('Helvetica').fillColor('#64748b')
+       .text('DATE OF ISSUE', 100, signatureY + 30, { width: 200, align: 'center' });
+
+    // Verification info (bottom left)
+    doc.fontSize(9).font('Helvetica').fillColor('#94a3b8')
+       .text(`Certificate No: ${certificate.certificateNumber}`, 40, height - 60);
+    doc.fontSize(9).font('Helvetica').fillColor('#94a3b8')
+       .text(`Verification Code: ${certificate.verificationCode}`, 40, height - 45);
+
+    // Signature 
+    doc.fontSize(24).font('Helvetica-Oblique').fillColor('#ca8a04')
+       .text('Adhoc LMS', width - 300, signatureY - 10, { align: 'center', width: 200 });
+    doc.rect(width - 300, signatureY + 20, 200, 1).fill('#0f172a');
+    doc.fontSize(10).font('Helvetica').fillColor('#64748b')
+       .text('DIRECTOR', width - 300, signatureY + 30, { width: 200, align: 'center' });
+       
+    // Add verification link (bottom right)
+    doc.fontSize(9).font('Helvetica').fillColor('#3b82f6')
+       .text(`Verify at: https://lms.adhoc.com/verify-certificate/${certificate.verificationCode}`, width - 350, height - 60, { width: 310, align: 'right' });
+
     doc.end();
   } catch (error) {
     console.error('Download certificate error:', error);
