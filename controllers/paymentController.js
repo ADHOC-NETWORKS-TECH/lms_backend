@@ -82,12 +82,17 @@ exports.verifyPayment = async (req, res) => {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId, plan, coinsUsed } = req.body;
         const userId = req.user.id;
 
-        let isFree = false;
         if (!razorpay_order_id && !razorpay_payment_id) {
             isFree = true;
         } else {
             const body = razorpay_order_id + '|' + razorpay_payment_id;
             const secret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
+            
+            console.log('--- Razorpay Verification Debug ---');
+            console.log('Order ID:', razorpay_order_id);
+            console.log('Payment ID:', razorpay_payment_id);
+            console.log('Signature Received:', razorpay_signature);
+            console.log('Secret Configured:', secret ? 'YES' : 'NO');
             
             if (!secret) {
                 return res.status(500).json({ success: false, message: 'Razorpay secret not configured on server' });
@@ -97,9 +102,16 @@ exports.verifyPayment = async (req, res) => {
                 .update(body)
                 .digest('hex');
             
+            console.log('Expected Signature:', expectedSignature);
+            
             if (expectedSignature !== razorpay_signature) {
-                return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+                console.error('SIGNATURE MISMATCH!');
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Invalid payment signature'
+                });
             }
+            console.log('SIGNATURE VERIFIED SUCCESS');
         }
 
         const course = await Course.findByPk(courseId);
