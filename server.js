@@ -34,7 +34,21 @@ const authLimiter = rateLimit({
 
 app.use(cors());
 app.use(express.json());
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com"],
+      frameSrc: ["'self'", "https://api.razorpay.com", "https://tds.razorpay.com", "https://checkout.razorpay.com"],
+      connectSrc: ["'self'", "https://api.razorpay.com", "https://lms-backend-g1cy.onrender.com"],
+      imgSrc: ["'self'", "data:", "https://*.razorpay.com", "https://images.unsplash.com", "https://i.pravatar.cc"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+    },
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginEmbedderPolicy: false,
+}));
 
 // Apply rate limiters
 app.use('/api', limiter);
