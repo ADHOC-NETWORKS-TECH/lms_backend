@@ -49,6 +49,14 @@ const Subscription = sequelize.define('Subscription', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
+  paymentId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  orderId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   timestamps: true,
   tableName: 'subscriptions',

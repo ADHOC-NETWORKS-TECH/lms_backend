@@ -83,13 +83,22 @@ exports.verifyPayment = async (req, res) => {
         const userId = req.user.id;
 
         let isFree = false;
-        if (!razorpay_order_id && !razorpay_payment_id && !razorpay_signature) {
-             isFree = true;
+        if (!razorpay_order_id && !razorpay_payment_id) {
+            isFree = true;
         } else {
             const body = razorpay_order_id + '|' + razorpay_payment_id;
-            const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret').update(body.toString()).digest('hex');
+            const secret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
+            
+            if (!secret) {
+                return res.status(500).json({ success: false, message: 'Razorpay secret not configured on server' });
+            }
+
+            const expectedSignature = crypto.createHmac('sha256', secret)
+                .update(body)
+                .digest('hex');
+            
             if (expectedSignature !== razorpay_signature) {
-                return res.status(400).json({ success: false, message: 'Invalid signature' });
+                return res.status(400).json({ success: false, message: 'Invalid payment signature' });
             }
         }
 
