@@ -85,33 +85,30 @@ exports.verifyPayment = async (req, res) => {
         if (!razorpay_order_id && !razorpay_payment_id) {
             isFree = true;
         } else {
-            const body = razorpay_order_id + '|' + razorpay_payment_id;
-            const secret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
-            
             console.log('--- Razorpay Verification Debug ---');
             console.log('Order ID:', razorpay_order_id);
             console.log('Payment ID:', razorpay_payment_id);
-            console.log('Signature Received:', razorpay_signature);
-            console.log('Secret Configured:', secret ? 'YES' : 'NO');
+            const body = razorpay_order_id + "|" + razorpay_payment_id;
+            const secret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
             
+            console.log('Verifying signature for Order:', razorpay_order_id);
             if (!secret) {
+                console.error('RAZORPAY_KEY_SECRET is missing on backend!');
                 return res.status(500).json({ success: false, message: 'Razorpay secret not configured on server' });
             }
 
             const expectedSignature = crypto.createHmac('sha256', secret)
                 .update(body)
                 .digest('hex');
-            
-            console.log('Expected Signature:', expectedSignature);
-            
+
             if (expectedSignature !== razorpay_signature) {
                 console.error('SIGNATURE MISMATCH!');
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Invalid payment signature'
-                });
+                console.log('Received Signature:', razorpay_signature);
+                // DO NOT log the full secret, but log its length to verify it's loaded
+                console.log('Secret Length:', secret.length);
+                return res.status(400).json({ success: false, message: 'Invalid payment signature' });
             }
-            console.log('SIGNATURE VERIFIED SUCCESS');
+            console.log('Signature verified successfully.');
         }
 
         const course = await Course.findByPk(courseId);
