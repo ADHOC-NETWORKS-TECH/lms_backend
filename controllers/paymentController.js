@@ -3,10 +3,16 @@ const crypto = require('crypto');
 const { Subscription, Course, User } = require('../models/associations');
 const { Op } = require('sequelize');
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+let razorpayInstance = null;
+const getRazorpay = () => {
+    if (!razorpayInstance) {
+        razorpayInstance = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key_id',
+            key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret'
+        });
+    }
+    return razorpayInstance;
+};
 
 const PLANS = {
     '1month': { name: '1 Month Access', duration: 30 },
@@ -63,6 +69,7 @@ exports.createOrder = async (req, res) => {
             receipt: 'receipt_' + Date.now()
         };
 
+        const razorpay = getRazorpay();
         const order = await razorpay.orders.create(options);
         res.json({ success: true, order, keyId: process.env.RAZORPAY_KEY_ID, amount });
     } catch (error) {
@@ -81,7 +88,7 @@ exports.verifyPayment = async (req, res) => {
              isFree = true;
         } else {
             const body = razorpay_order_id + '|' + razorpay_payment_id;
-            const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(body.toString()).digest('hex');
+            const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret').update(body.toString()).digest('hex');
             if (expectedSignature !== razorpay_signature) {
                 return res.status(400).json({ success: false, message: 'Invalid signature' });
             }
