@@ -149,7 +149,6 @@ exports.getMyCourses = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const userId = req.user.id;
 
     // Get subscriptions WITHOUT include first
     const subscriptions = await Subscription.findAll({
