@@ -67,7 +67,6 @@ exports.createSubscription = async (req, res) => {
 
     // Validate user exists
     if (!req.user || !req.user.id) {
-    if (!req.user || !req.user.id) {
       return res.status(401).json({
         success: false,
         message: 'User not authenticated'
@@ -75,13 +74,11 @@ exports.createSubscription = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const userId = req.user.id;
 
     // Verify user exists in database
     const User = require('../models/User');
     const userExists = await User.findByPk(userId);
     
-    if (!userExists) {
     if (!userExists) {
       return res.status(400).json({
         success: false,
