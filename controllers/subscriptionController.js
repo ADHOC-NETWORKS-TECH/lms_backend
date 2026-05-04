@@ -50,8 +50,7 @@ exports.getPlansForCourse = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get plans error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -64,14 +63,11 @@ exports.createSubscription = async (req, res) => {
   try {
     const { courseId, plan, paymentId } = req.body;
     
-    // DEBUG: Log the request
-    console.log('📝 Create Subscription Request:');
-    console.log('   req.user:', req.user);
-    console.log('   req.body:', req.body);
+
 
     // Validate user exists
     if (!req.user || !req.user.id) {
-      console.log('❌ No user found in request');
+    if (!req.user || !req.user.id) {
       return res.status(401).json({
         success: false,
         message: 'User not authenticated'
@@ -79,20 +75,20 @@ exports.createSubscription = async (req, res) => {
     }
 
     const userId = req.user.id;
-    console.log(`   User ID: ${userId}`);
+    const userId = req.user.id;
 
     // Verify user exists in database
     const User = require('../models/User');
     const userExists = await User.findByPk(userId);
     
     if (!userExists) {
-      console.log(`❌ User with ID ${userId} does not exist in database`);
+    if (!userExists) {
       return res.status(400).json({
         success: false,
         message: 'Invalid user. Please login again.'
       });
     }
-    console.log(`✅ User found: ${userExists.email}`);
+
 
     // Validate course exists
     const Course = require('../models/Course');
@@ -103,7 +99,7 @@ exports.createSubscription = async (req, res) => {
         message: 'Course not found'
       });
     }
-    console.log(`✅ Course found: ${course.title}`);
+
 
     // Validate plan
     const PLANS = {
@@ -134,7 +130,7 @@ exports.createSubscription = async (req, res) => {
       default:
         price = 499;
     }
-    console.log(`   Plan: ${plan}, Price: ${price}`);
+
 
     // Check if user already has active subscription for this course
     const { Subscription } = require('../models/associations');
@@ -166,7 +162,7 @@ exports.createSubscription = async (req, res) => {
     const startDate = new Date();
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + PLANS[plan].duration);
-    console.log(`   Start: ${startDate}, End: ${endDate}`);
+
 
     // Create subscription
     const subscription = await Subscription.create({
@@ -179,7 +175,7 @@ exports.createSubscription = async (req, res) => {
       amount: price
     });
 
-    console.log(`✅ Subscription created with ID: ${subscription.id}`);
+
 
     res.status(201).json({
       success: true,
@@ -199,8 +195,7 @@ exports.createSubscription = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ Create subscription error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -247,8 +242,7 @@ exports.getMySubscriptions = async (req, res) => {
       data: subscriptionsWithDetails
     });
   } catch (error) {
-    console.error('Get my subscriptions error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -263,7 +257,7 @@ exports.checkCourseAccess = async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user.id;
 
-    console.log(`Checking access for User ${userId} on Course ${courseId}`);
+
 
     // First, check if course exists
     const course = await Course.findByPk(courseId);
@@ -285,7 +279,6 @@ exports.checkCourseAccess = async (req, res) => {
     });
 
     if (subscription) {
-      console.log(`✅ Access granted. Subscription found:`, subscription.id);
       res.json({
         success: true,
         hasAccess: true,
@@ -308,7 +301,6 @@ exports.checkCourseAccess = async (req, res) => {
         }
       });
     } else {
-      console.log(`❌ No access. No active subscription found`);
       res.json({
         success: true,
         hasAccess: false,
@@ -324,8 +316,7 @@ exports.checkCourseAccess = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Check course access error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -353,8 +344,7 @@ exports.getCourseSubscriptionHistory = async (req, res) => {
       data: subscriptions
     });
   } catch (error) {
-    console.error('Get course subscription history error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -387,8 +377,7 @@ exports.getAllSubscriptions = async (req, res) => {
       data: subscriptions
     });
   } catch (error) {
-    console.error('Get all subscriptions error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -431,8 +420,7 @@ exports.getExpiringSubscriptions = async (req, res) => {
       data: subscriptions
     });
   } catch (error) {
-    console.error('Get expiring subscriptions error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -475,8 +463,7 @@ exports.extendSubscription = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Extend subscription error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

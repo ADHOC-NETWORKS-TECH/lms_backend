@@ -6,8 +6,7 @@ exports.getCourseModules = async (req, res) => {
     // Get courseId from params (this is set by the route: /:id/modules)
     const courseId = req.params.id;
     
-    console.log(`📚 Getting modules for course: ${courseId}`);
-
+    
     if (!courseId) {
       return res.status(400).json({
         success: false,
@@ -37,16 +36,14 @@ exports.getCourseModules = async (req, res) => {
       order: [['order', 'ASC']]
     });
 
-    console.log(`   Found ${modules.length} modules`);
-
+    
     res.json({
       success: true,
       count: modules.length,
       data: modules
     });
   } catch (error) {
-    console.error('Get course modules error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -87,8 +84,7 @@ exports.addModule = async (req, res) => {
       data: module
     });
   } catch (error) {
-    console.error('Add module error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -121,8 +117,7 @@ exports.updateModule = async (req, res) => {
       data: module
     });
   } catch (error) {
-    console.error('Update module error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -149,8 +144,7 @@ exports.deleteModule = async (req, res) => {
       message: 'Module deleted successfully'
     });
   } catch (error) {
-    console.error('Delete module error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

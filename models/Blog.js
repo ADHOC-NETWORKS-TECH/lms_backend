@@ -42,3 +42,4 @@ const Blog = sequelize.define('Blog', {
 });
 
 module.exports = Blog;
+

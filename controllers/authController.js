@@ -80,8 +80,7 @@ exports.register = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message,
@@ -145,8 +144,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message,
@@ -173,8 +171,7 @@ exports.getMe = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error('Get profile error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
     });

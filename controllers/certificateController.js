@@ -20,8 +20,7 @@ exports.generateCertificate = async (req, res) => {
     const userId = req.user.id;
     const { quizScore } = req.body;
     
-    console.log(`📜 Generating certificate for user ${userId}, course ${courseId}, score ${quizScore}`);
-    
+        
     if (quizScore < 70) {
       return res.status(400).json({
         success: false,
@@ -61,8 +60,7 @@ exports.generateCertificate = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Generate certificate error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -79,8 +77,7 @@ exports.getMyCertificates = async (req, res) => {
     
     res.json({ success: true, data: certificates });
   } catch (error) {
-    console.error('Get certificates error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -194,8 +191,7 @@ exports.downloadCertificate = async (req, res) => {
 
     doc.end();
   } catch (error) {
-    console.error('Download certificate error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -227,8 +223,7 @@ exports.verifyCertificate = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Verify certificate error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -245,7 +240,6 @@ exports.getAllCertificates = async (req, res) => {
     
     res.json({ success: true, data: certificates });
   } catch (error) {
-    console.error('Get all certificates error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };

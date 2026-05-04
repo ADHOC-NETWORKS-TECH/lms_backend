@@ -7,11 +7,7 @@ exports.checkCourseAccess = async (req, res, next) => {
     // IMPORTANT: Get courseId from different possible locations
     let courseId = req.params.courseId || req.params.id;
     
-    console.log('🔍 Course Access Check Debug:');
-    console.log('   req.params:', req.params);
-    console.log('   Extracted courseId:', courseId);
-    console.log('   User ID:', req.user?.id);
-
+                
     // If still no courseId, check the URL path
     if (!courseId) {
       const pathParts = req.path.split('/');
@@ -25,8 +21,7 @@ exports.checkCourseAccess = async (req, res, next) => {
     }
 
     if (!courseId) {
-      console.error('❌ No courseId found in request');
-      return res.status(400).json({
+            return res.status(400).json({
         success: false,
         message: 'Course ID is required'
       });
@@ -53,8 +48,7 @@ exports.checkCourseAccess = async (req, res, next) => {
       }
     });
 
-    console.log('   Subscription found:', !!subscription);
-
+    
     if (!subscription) {
       return res.status(403).json({
         success: false,
@@ -79,11 +73,9 @@ exports.checkCourseAccess = async (req, res, next) => {
       daysRemaining: Math.ceil((new Date(subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24))
     };
     
-    console.log('✅ Access granted');
-    next();
+        next();
   } catch (error) {
-    console.error('❌ Course access check error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

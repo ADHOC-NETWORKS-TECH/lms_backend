@@ -39,8 +39,7 @@ exports.addLesson = async (req, res) => {
       data: lesson
     });
   } catch (error) {
-    console.error('Add lesson error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -77,8 +76,7 @@ exports.updateLesson = async (req, res) => {
       data: lesson
     });
   } catch (error) {
-    console.error('Update lesson error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -105,8 +103,7 @@ exports.deleteLesson = async (req, res) => {
       message: 'Lesson deleted successfully'
     });
   } catch (error) {
-    console.error('Delete lesson error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -189,8 +186,7 @@ exports.getLessonById = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get lesson error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

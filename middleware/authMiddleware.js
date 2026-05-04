@@ -4,18 +4,14 @@ const jwt = require('jsonwebtoken');
 exports.protect = async (req, res, next) => {
   let token;
 
-  console.log('🔐 Auth Debug: Headers received:', JSON.stringify(req.headers, null, 2));
-
+  
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
-    console.log('🔐 Auth Debug: Token found:', token.substring(0, 30) + '...');
-  } else {
-    console.log('🔐 Auth Debug: No authorization header or wrong format');
-  }
+      } else {
+      }
 
   if (!token) {
-    console.log('❌ No token provided');
-    return res.status(401).json({
+        return res.status(401).json({
       success: false,
       message: 'Not authorized to access this route',
     });
@@ -31,8 +27,7 @@ exports.protect = async (req, res, next) => {
     });
     next();
   } catch (error) {
-    console.error('❌ Token verification failed:', error.message);
-    return res.status(401).json({
+        return res.status(401).json({
       success: false,
       message: 'Not authorized, token failed',
     });

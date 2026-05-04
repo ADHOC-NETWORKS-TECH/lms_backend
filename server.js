@@ -76,15 +76,11 @@ const startServer = async () => {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
-    console.log('✅ Database synced');
-    console.log('✅ Database connected successfully');
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📡 Health check: http://localhost:${PORT}/health`);
+      
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error.message);
     process.exit(1);
   }
 };

@@ -6,8 +6,7 @@ exports.getCourseQuizzes = async (req, res) => {
   try {
     const { courseId } = req.params;
     
-    console.log(`Fetching quizzes for course: ${courseId}`);
-    
+        
     const quizzes = await Quiz.findAll({
       where: { courseId },
       include: [
@@ -26,8 +25,7 @@ exports.getCourseQuizzes = async (req, res) => {
       order: [['type', 'ASC'], ['order', 'ASC'], ['createdAt', 'ASC']]
     });
     
-    console.log(`Found ${quizzes.length} quizzes`);
-    
+        
     const moduleQuizzes = quizzes.filter(q => q.type === 'module');
     const finalQuiz = quizzes.find(q => q.type === 'final');
     
@@ -39,8 +37,7 @@ exports.getCourseQuizzes = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get course quizzes error:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
@@ -61,8 +58,7 @@ exports.getModuleQuizzes = async (req, res) => {
     
     res.json({ success: true, data: quizzes });
   } catch (error) {
-    console.error('Get module quizzes error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -94,8 +90,7 @@ exports.checkModuleQuizStatus = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Check module quiz status error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -117,8 +112,7 @@ exports.getQuiz = async (req, res) => {
     
     res.json({ success: true, data: quiz });
   } catch (error) {
-    console.error('Get quiz error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -178,8 +172,7 @@ exports.submitQuiz = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Submit quiz error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -205,8 +198,7 @@ exports.getMyAttempts = async (req, res) => {
     
     res.json({ success: true, data: attempts });
   } catch (error) {
-    console.error('Get attempts error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -232,8 +224,7 @@ exports.createQuiz = async (req, res) => {
       data: quiz
     });
   } catch (error) {
-    console.error('Create quiz error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -262,8 +253,7 @@ exports.addQuestions = async (req, res) => {
       data: createdQuestions
     });
   } catch (error) {
-    console.error('Add questions error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -281,8 +271,7 @@ exports.deleteQuiz = async (req, res) => {
     
     res.json({ success: true, message: 'Quiz deleted successfully' });
   } catch (error) {
-    console.error('Delete quiz error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -315,8 +304,7 @@ exports.updateQuiz = async (req, res) => {
       data: quiz
     });
   } catch (error) {
-    console.error('Update quiz error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -346,8 +334,7 @@ exports.deleteQuiz = async (req, res) => {
       message: 'Quiz deleted successfully'
     });
   } catch (error) {
-    console.error('Delete quiz error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -384,8 +371,7 @@ exports.updateQuestion = async (req, res) => {
       data: question
     });
   } catch (error) {
-    console.error('Update question error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -414,8 +400,7 @@ exports.deleteQuestion = async (req, res) => {
       message: 'Question deleted successfully'
     });
   } catch (error) {
-    console.error('Delete question error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -442,8 +427,7 @@ exports.getQuestion = async (req, res) => {
       data: question
     });
   } catch (error) {
-    console.error('Get question error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

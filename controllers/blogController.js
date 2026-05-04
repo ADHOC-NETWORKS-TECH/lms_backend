@@ -14,8 +14,7 @@ exports.getBlogs = async (req, res) => {
     });
     res.json({ success: true, data: blogs });
   } catch (error) {
-    console.error('Get blogs error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -34,8 +33,7 @@ exports.getBlogBySlug = async (req, res) => {
     
     res.json({ success: true, data: blog });
   } catch (error) {
-    console.error('Get blog error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -48,8 +46,7 @@ exports.getAllBlogs = async (req, res) => {
     });
     res.json({ success: true, data: blogs });
   } catch (error) {
-    console.error('Admin get blogs error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -78,8 +75,7 @@ exports.createBlog = async (req, res) => {
     
     res.status(201).json({ success: true, message: 'Blog created successfully', data: blog });
   } catch (error) {
-    console.error('Create blog error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -113,8 +109,7 @@ exports.updateBlog = async (req, res) => {
     
     res.json({ success: true, message: 'Blog updated successfully', data: blog });
   } catch (error) {
-    console.error('Update blog error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -131,7 +126,7 @@ exports.deleteBlog = async (req, res) => {
     await blog.destroy();
     res.json({ success: true, message: 'Blog deleted successfully' });
   } catch (error) {
-    console.error('Delete blog error:', error);
-    res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
   }
 };
+

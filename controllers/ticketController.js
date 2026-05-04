@@ -29,8 +29,7 @@ exports.createTicket = async (req, res) => {
       data: ticket
     });
   } catch (error) {
-    console.error('Create ticket error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -58,8 +57,7 @@ exports.getMyTickets = async (req, res) => {
       data: tickets
     });
   } catch (error) {
-    console.error('Get my tickets error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -93,8 +91,7 @@ exports.getTicketById = async (req, res) => {
       data: ticket
     });
   } catch (error) {
-    console.error('Get ticket error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -127,8 +124,7 @@ exports.getAllTickets = async (req, res) => {
       data: tickets
     });
   } catch (error) {
-    console.error('Get all tickets error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -174,8 +170,7 @@ exports.respondToTicket = async (req, res) => {
       data: ticket
     });
   } catch (error) {
-    console.error('Respond to ticket error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -206,8 +201,7 @@ exports.updateTicketStatus = async (req, res) => {
       data: ticket
     });
   } catch (error) {
-    console.error('Update ticket status error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -228,8 +222,7 @@ exports.getTicketStats = async (req, res) => {
       data: { open, inProgress, resolved, closed }
     });
   } catch (error) {
-    console.error('Get ticket stats error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

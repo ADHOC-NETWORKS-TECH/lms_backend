@@ -26,8 +26,7 @@ exports.checkSubscription = async (req, res, next) => {
     req.subscription = subscription;
     next();
   } catch (error) {
-    console.error('Subscription check error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -52,8 +51,7 @@ exports.hasActiveSubscription = async (req, res, next) => {
     req.subscription = subscription;
     next();
   } catch (error) {
-    console.error('Subscription check error:', error);
-    req.hasSubscription = false;
+        req.hasSubscription = false;
     next();
   }
 };

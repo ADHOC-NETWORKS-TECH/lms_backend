@@ -48,8 +48,7 @@ exports.markLessonComplete = async (req, res) => {
       data: progress
     });
   } catch (error) {
-    console.error('Mark lesson complete error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -84,8 +83,7 @@ exports.unmarkLessonComplete = async (req, res) => {
       message: 'Lesson marked as incomplete'
     });
   } catch (error) {
-    console.error('Unmark lesson error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -160,8 +158,7 @@ exports.getCourseProgress = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get course progress error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -234,8 +231,7 @@ exports.getOverallProgress = async (req, res) => {
       data: coursesWithProgress
     });
   } catch (error) {
-    console.error('Get overall progress error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

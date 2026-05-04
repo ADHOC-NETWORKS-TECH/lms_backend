@@ -6,8 +6,7 @@ exports.testSendEmail = async (req, res) => {
   try {
     const { email, type, subscriptionId } = req.body;
     
-    console.log('📧 Test email request:', { email, type, subscriptionId });
-    
+        
     let user, course, subscription;
     
     if (subscriptionId) {
@@ -114,8 +113,7 @@ exports.testSendEmail = async (req, res) => {
       result
     });
   } catch (error) {
-    console.error('Test email error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Failed to send test email',
       error: error.message
@@ -133,8 +131,7 @@ exports.triggerExpiryCheck = async (req, res) => {
       message: 'Expiry check triggered manually'
     });
   } catch (error) {
-    console.error('Trigger expiry check error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Failed to trigger expiry check',
       error: error.message

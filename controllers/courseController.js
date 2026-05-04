@@ -43,8 +43,7 @@ exports.getAllCourses = async (req, res) => {
       data: coursesWithAccess
     });
   } catch (error) {
-    console.error('Get all courses error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -131,8 +130,7 @@ exports.getCourseById = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get course by ID error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -151,7 +149,7 @@ exports.getMyCourses = async (req, res) => {
     }
 
     const userId = req.user.id;
-    console.log(`Getting purchased courses for user: ${userId}`);
+    const userId = req.user.id;
 
     // Get subscriptions WITHOUT include first
     const subscriptions = await Subscription.findAll({
@@ -162,7 +160,7 @@ exports.getMyCourses = async (req, res) => {
       }
     });
 
-    console.log(`Found ${subscriptions.length} active subscriptions`);
+
 
     if (subscriptions.length === 0) {
       return res.json({
@@ -200,8 +198,7 @@ exports.getMyCourses = async (req, res) => {
       data: courses
     });
   } catch (error) {
-    console.error('Get my courses error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -250,8 +247,7 @@ exports.createCourse = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Create course error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -302,8 +298,7 @@ exports.updateCourse = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Update course error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -330,8 +325,7 @@ exports.deleteCourse = async (req, res) => {
       message: 'Course deleted successfully'
     });
   } catch (error) {
-    console.error('Delete course error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message

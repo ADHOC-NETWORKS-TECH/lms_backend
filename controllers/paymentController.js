@@ -73,7 +73,6 @@ exports.createOrder = async (req, res) => {
         const order = await razorpay.orders.create(options);
         res.json({ success: true, order, keyId: process.env.RAZORPAY_KEY_ID, amount });
     } catch (error) {
-        console.error('Create order error:', error);
         res.status(500).json({ success: false, message: 'Failed to create order', error: error.message });
     }
 };
@@ -142,7 +141,7 @@ exports.verifyPayment = async (req, res) => {
 
         res.json({ success: true, message: 'Payment verified successfully! Course purchased.', data: { subscriptionId: subscription.id, courseId, plan, amount: amountPaid, expiresAt: endDate, daysRemaining: PLANS[plan].duration } });
     } catch (error) {
-        console.error('Verify payment error:', error);
         res.status(500).json({ success: false, message: 'Payment verification failed', error: error.message });
     }
 };
+

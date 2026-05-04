@@ -3,16 +3,13 @@ const { Op } = require('sequelize');
 
 exports.getAnalytics = async (req, res) => {
   try {
-    console.log('📊 Fetching analytics...');
-    
+        
     // Get total students
     const totalStudents = await User.count({ where: { role: 'student' } });
-    console.log('Total students:', totalStudents);
-    
+        
     // Get total courses
     const totalCourses = await Course.count();
-    console.log('Total courses:', totalCourses);
-    
+        
     // Get active subscriptions
     const activeSubscriptions = await Subscription.count({
       where: {
@@ -20,8 +17,7 @@ exports.getAnalytics = async (req, res) => {
         endDate: { [Op.gt]: new Date() }
       }
     });
-    console.log('Active subscriptions:', activeSubscriptions);
-    
+        
     // Get total revenue
     const revenueResult = await Subscription.sum('amount', {
       where: {
@@ -30,8 +26,7 @@ exports.getAnalytics = async (req, res) => {
       }
     });
     const totalRevenue = revenueResult || 0;
-    console.log('Total revenue:', totalRevenue);
-    
+        
     // Simple monthly revenue (last 6 months)
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const currentMonth = new Date().getMonth();
@@ -87,8 +82,7 @@ exports.getAnalytics = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ Analytics error:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: error.message,
       stack: error.stack

@@ -45,8 +45,7 @@ exports.changePassword = async (req, res) => {
       message: 'Password changed successfully'
     });
   } catch (error) {
-    console.error('Change password error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -90,8 +89,7 @@ exports.forgotPassword = async (req, res) => {
       message: 'If your email is registered, you will receive a reset link'
     });
   } catch (error) {
-    console.error('Forgot password error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -141,8 +139,7 @@ exports.resetPassword = async (req, res) => {
       message: 'Password reset successfully'
     });
   } catch (error) {
-    console.error('Reset password error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
@@ -174,8 +171,7 @@ exports.verifyResetToken = async (req, res) => {
       message: 'Token is valid'
     });
   } catch (error) {
-    console.error('Verify token error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server error',
       error: error.message
