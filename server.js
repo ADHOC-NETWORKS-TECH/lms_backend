@@ -48,7 +48,7 @@ app.use('/api/courses', require('./routes/courseRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/progress', require('./routes/progressRoutes'));
 app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
-app.use('/api/payments', require('./routes/mockPaymentRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/email', emailRoutes);
