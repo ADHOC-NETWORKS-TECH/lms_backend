@@ -25,7 +25,7 @@ exports.submitFeedback = async (req, res) => {
 exports.getAllFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.findAll({
-      include: [{ model: User, as: 'user', attributes: ['id', 'name', 'avatar', 'role'] }],
+      include: [{ model: User, as: 'user', attributes: ['id', 'name', 'role'] }],
       order: [['createdAt', 'DESC']]
     });
     res.status(200).json({ success: true, data: feedbacks });
@@ -59,7 +59,7 @@ exports.getHomeFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.findAll({
       where: { showOnHome: true },
-      include: [{ model: User, as: 'user', attributes: ['name', 'avatar', 'role'] }],
+      include: [{ model: User, as: 'user', attributes: ['name', 'role'] }],
       order: [['createdAt', 'DESC']]
     });
     res.status(200).json({ success: true, data: feedbacks });
