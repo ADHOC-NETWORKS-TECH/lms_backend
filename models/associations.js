@@ -12,6 +12,7 @@ const QuizAttempt = require('./QuizAttempt');
 const sequelize = require('../config/database');
 const Ticket = require('./Ticket');
 const Blog = require('./Blog');
+const Feedback = require('./Feedback');
 
 // User associations
 User.hasMany(Subscription, { foreignKey: 'userId', as: 'subscriptions' });
@@ -25,6 +26,9 @@ Certificate.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 User.hasMany(QuizAttempt, { foreignKey: 'userId', as: 'quizAttempts' });
 QuizAttempt.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+User.hasMany(Feedback, { foreignKey: 'userId', as: 'feedbacks' });
+Feedback.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 // Course associations
 Course.hasMany(Module, { foreignKey: 'courseId', as: 'modules' });
@@ -80,4 +84,5 @@ module.exports = {
   QuizAttempt,
   Ticket,
   Blog,
+  Feedback,
 };
