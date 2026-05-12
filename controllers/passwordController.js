@@ -82,7 +82,15 @@ exports.forgotPassword = async (req, res) => {
 
     // Send email (using Resend or Nodemailer)
     const emailService = require('../services/emailService');
-    await emailService.sendPasswordResetEmail(user.email, user.name, resetUrl);
+    const emailResult = await emailService.sendPasswordResetEmail(user.email, user.name, resetUrl);
+
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send email. Please check server logs.',
+        error: emailResult.error
+      });
+    }
 
     res.json({
       success: true,
