@@ -1,12 +1,35 @@
-// Simple email service (mock mode for development)
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, html) => {
-  console.log('='.repeat(50));
-  console.log('📧 [MOCK] Email would be sent to:', to);
-  console.log('   Subject:', subject);
-  console.log('   Content Preview:', html?.substring(0, 200) + '...');
-  console.log('='.repeat(50));
-  return { success: true, mock: true };
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      console.log('='.repeat(50));
+      console.log('📧 [MOCK] Email would be sent to:', to);
+      console.log('   Subject:', subject);
+      console.log('   Content Preview:', html?.substring(0, 200) + '...');
+      console.log('='.repeat(50));
+      return { success: true, mock: true };
+    }
+
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+      to: [to],
+      subject: subject,
+      html: html,
+    });
+
+    if (error) {
+      console.error('Error sending email:', error);
+      return { success: false, error };
+    }
+
+    console.log(`📧 Email sent to ${to} successfully. ID: ${data.id}`);
+    return { success: true, data };
+  } catch (err) {
+    console.error('Email sending failed:', err);
+    return { success: false, error: err.message };
+  }
 };
 
 exports.sendWelcomeEmail = async (user, course, subscription) => {
