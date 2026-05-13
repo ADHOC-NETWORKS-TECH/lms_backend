@@ -60,10 +60,9 @@ exports.forgotPassword = async (req, res) => {
     
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      // Don't reveal that user doesn't exist for security
-      return res.json({
-        success: true,
-        message: 'If your email is registered, you will receive a reset link'
+      return res.status(404).json({
+        success: false,
+        message: 'This email is not registered in our database. Please register first.'
       });
     }
 
