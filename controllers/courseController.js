@@ -100,6 +100,7 @@ exports.getCourseById = async (req, res) => {
       if (hasAccess) {
         accessInfo = {
           plan: subscription.plan,
+          startDate: subscription.startDate,
           expiresAt: subscription.endDate,
           daysRemaining: Math.ceil((new Date(subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24)),
           purchasedAt: subscription.createdAt,
@@ -182,6 +183,7 @@ exports.getMyCourses = async (req, res) => {
           subscription: {
             id: sub.id,
             plan: sub.plan,
+            startDate: sub.startDate,
             expiresAt: sub.endDate,
             daysRemaining: Math.ceil((new Date(sub.endDate) - new Date()) / (1000 * 60 * 60 * 24)),
             purchasedAt: sub.createdAt,

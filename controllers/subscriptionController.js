@@ -282,6 +282,7 @@ exports.checkCourseAccess = async (req, res) => {
         subscription: {
           id: subscription.id,
           plan: subscription.plan,
+          startDate: subscription.startDate,
           expiresAt: subscription.endDate,
           daysRemaining: Math.ceil((new Date(subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24)),
           amount: subscription.amount,
