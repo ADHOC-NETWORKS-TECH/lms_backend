@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User, Course, Module, Lesson, Subscription } = require('../models/associations');
+const { User, Course, Module, Lesson, Subscription, Quiz, QuizQuestion } = require('../models/associations');
 const sequelize = require('../config/database');
 
 const seedData = async () => {
