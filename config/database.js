@@ -8,16 +8,9 @@ const databaseUrl = process.env.DATABASE_URL;
 let sequelize;
 
 if (databaseUrl) {
-  // Connection via URL (like Supabase or some Hostinger setups)
-  const isPostgres = databaseUrl.startsWith('postgres');
+  // Connection via URL (MySQL on Hostinger or local)
   sequelize = new Sequelize(databaseUrl, {
-    dialect: isPostgres ? 'postgres' : 'mysql',
-    dialectOptions: isPostgres ? {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    } : {},
+    dialect: 'mysql',
     logging: false,
     pool: {
       max: 5,
@@ -49,10 +42,13 @@ if (databaseUrl) {
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-      } catch (error) {
-      }
+    console.log('Database connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 };
 
 testConnection();
 
 module.exports = sequelize;
+

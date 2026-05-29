@@ -7,7 +7,7 @@ async function dropBlogTable() {
     console.log('Connected to DB');
     
     // Check if the table exists and drop it
-    await sequelize.query('DROP TABLE IF EXISTS "blogs" CASCADE;');
+    await Blog.drop();
     console.log('Dropped blogs table successfully');
     
     process.exit(0);
